@@ -1,4 +1,4 @@
-package realtime_weather
+package main
 
 import "time"
 

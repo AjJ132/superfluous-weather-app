@@ -1,6 +1,6 @@
 go 1.20
 
 use (
-	github.com/AjJ132/superfluous-weather-app/weather-manager
-	github.com/AjJ132/superfluous-weather-app/user-manager
+	./user-manager
+	./weather-manager
 )

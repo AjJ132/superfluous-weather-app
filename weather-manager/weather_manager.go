@@ -8,9 +8,8 @@ import (
 )
 
 func main() {
-	info := getRealtimeWeather()
-
-	fmt.Println(info)
+	weather := getRealtimeWeather()
+	fmt.Println(weather)
 }
 
 func getRealtimeWeather() *RealtimeWeather {

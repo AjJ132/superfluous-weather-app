@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="css/main-page.css" rel="stylesheet" />
+    <title>Vite App</title>
+  </head>
+  <body>
+    <script type="module" src="/main.js"></script>
+    <div class="main-page-container">
+      <h1 style="margin-block-start: 0">Superfluous Weather</h1>
+      <div class="weather-grid">
+        <div class="search-bar">
+          <input
+            type="text"
+            id="locationTB"
+            placeholder="Enter your text here..."
+          />
+        </div>
+        <div class="current-weather">
+          <div class="current-weather-content">
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
+                width: 100%;
+              "
+            >
+              <div>
+                <h2>Hartwell</h2>
+                <p>Hartwell, GA</p>
+              </div>
+              <div>
+                <h2>92&deg;</h2>
+              </div>
+            </div>
+            <div style="width: 80%; overflow: hidden; display: block">
+              <img src="./public/sunny.svg" />
+            </div>
+          </div>
+        </div>
+        <div class="three-day-forecast"></div>
+        <div class="hours-forecast">
+          <div class="hours-forecast-content">
+            <div style="height: 30px; display: flex; justify-content: start">
+              <h3>Next 6 Hours</h3>
+            </div>
+            <div class="hours-forecast-content-hours">
+              <div class="hours-forecast-content-hour"></div>
+              <div class="hours-forecast-content-hour"></div>
+              <div class="hours-forecast-content-hour"></div>
+              <div class="hours-forecast-content-hour"></div>
+              <div class="hours-forecast-content-hour"></div>
+              <div class="hours-forecast-content-hour"></div>
+            </div>
+          </div>
+        </div>
+        <div class="extra-info"></div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: DBPassword
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  user-management-service:
+    build: ./user-management-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  weather-data-service:
+    build: ./weather-data-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+  weather-cache-service:
+    build: ./weather-cache-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db
+volumes:
+  postgres-data:

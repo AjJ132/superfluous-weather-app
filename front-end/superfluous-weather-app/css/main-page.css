@@ -1,6 +1,7 @@
 .main-page-container{
     width: 100vw;
     height: 100vh;
+    min-width: 1200px;
 
     display: flex;
     flex-direction: column;
@@ -30,18 +31,82 @@
     grid-template-columns: 3fr 2fr;
 
     /* Define the rows (1fr, 5fr, 2fr, 2fr) */
-    grid-template-rows: 1fr 4fr 2fr;
+    grid-template-rows: 1fr 3fr 3fr 3fr;
 }
 
 .search-bar{
     width: 100%;
     height: 100%;
+    max-width: 670px;
 
     background-color: #212c3e;
     border-radius: 25px;
 
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#locationTB {
+    background-color: #212c3e; 
+    margin-left: 10px;
+     
+    border: 2px solid transparent;
+    border-radius: 25px;  /* This gives the input field rounded corners */
+    width: 90%;
+    height: 100%;
+    outline: none;  /* This removes the default outline that appears on focus */
+}
+
+#locationTB::placeholder {
+    color: #888;
+}
+
+.current-weather{
+    width: 100%;
+    height: 100%;
+    background-color: #212c3e;
+    border-radius: 25px;
+
+    grid-row: 2 / span 1;
+    grid-column: 1 / span 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.current-weather-content{
+    width: 90%;
+    height: 80%;
+
+    padding: 1rem;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.current-weather-content h2{
+    font-size: 2.5em;
+    
+    margin-block-end: 0;
+    margin-block-start: 0;
+}
+
+.current-weather-content p{
+    margin-block-end: 0;
+    margin-block-start: 0;
+}
+
+.current-weather-content img{
+  margin-top: auto;
 }
 
 .three-day-forecast{
@@ -52,8 +117,10 @@
     border-radius: 25px;
 
     grid-column: 2 / span 1;
-    grid-row: 1 /span 3;
+    grid-row: 1 /span 4;
 }
+
+
 
 .hours-forecast{
     width: 100%;
@@ -62,8 +129,62 @@
     background-color: #212c3e;
     border-radius: 25px;
 
+    display: flex;
+    justify-content: center;
+
     grid-column: 1 / span 1;
-    grid-row: 2 / span 1;
+    grid-row: 3 / span 1;
+}
+
+.hours-forecast-content{
+    width: 90%;
+    height: 90%;
+
+    padding: 0;
+    margin: auto;
+
+    
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    
+
+    column-gap: 10px;
+}
+
+.hours-forecast-content-hours{
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    column-gap: 10px;
+
+}
+
+.hours-forecast-content h3{
+    margin-block-end: 0;
+    margin-block-start: 0;
+}
+
+.hours-forecast-content-hour{
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 25px;
+    border: #888 solid 1px;
+
+   
 }
 
 .extra-info{
@@ -74,7 +195,7 @@
     border-radius: 25px;
 
     grid-column: 1 / span 1;
-    grid-row: 3 / span 1;
+    grid-row: 4 / span 1;
 }
 
 

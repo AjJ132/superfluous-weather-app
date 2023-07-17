@@ -2,12 +2,15 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
 
 func main() {
+	info := getRealtimeWeather()
 
+	fmt.Println(info)
 }
 
 func getRealtimeWeather() *RealtimeWeather {

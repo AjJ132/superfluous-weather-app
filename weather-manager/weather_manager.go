@@ -69,7 +69,7 @@ func (h *Handler) getFutureWeather(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "location parameter is required", http.StatusBadRequest)
 		return
 	}
-	url := fmt.Sprintf("https://weatherapi-com.p.rapidapi.com/forecast.json?q=%s&days=1", location)
+	url := fmt.Sprintf("https://weatherapi-com.p.rapidapi.com/forecast.json?q=%s&days=3", location)
 
 	req, _ := http.NewRequest("GET", url, nil)
 

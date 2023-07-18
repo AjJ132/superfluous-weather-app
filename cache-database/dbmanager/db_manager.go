@@ -127,6 +127,9 @@ func getCurrentWeather(w http.ResponseWriter, r *http.Request, collection *mongo
 		{"location.region", location.Region},
 	}
 
+	fmt.Println("Location Name: ", location.Name)
+	fmt.Println("Location Region: ", location.Region)
+
 	var result ForecastWeather
 	err = collection.FindOne(context.Background(), filter).Decode(&result)
 

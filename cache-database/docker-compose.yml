@@ -12,8 +12,8 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017
   mongodb:
     image: mongo:latest
-    volumes:
-      - ./mongodb/data:/data/db
+    # volumes:
+    #   - ./mongodb/data:/data/db
     ports: # Add this section
       - "27017:27017"
     networks:

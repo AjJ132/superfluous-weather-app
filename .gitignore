@@ -30,3 +30,5 @@ cache-database/mongodb/data/diagnostic.data/metrics.2023-07-18T15-28-37Z-00000
 cache-database/mongodb/data/diagnostic.data/metrics.2023-07-18T16-28-24Z-00000
 cache-database/mongodb/data/diagnostic.data/metrics.2023-07-18T16-29-43Z-00000
 cache-database/mongodb/data/journal/WiredTigerLog.0000000010
+cache-database/mongodb/data/diagnostic.data/metrics.2023-07-18T17-01-11Z-00000
+cache-database/mongodb/data/journal/WiredTigerLog.0000000011

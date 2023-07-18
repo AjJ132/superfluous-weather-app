@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -30,11 +31,38 @@ func main() {
 
 	collection := client.Database("Weather").Collection("documents")
 
-	http.HandleFunc("/save-current-weather", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/save-forecast", func(w http.ResponseWriter, r *http.Request) {
 		saveCurrentWeather(w, r, collection)
 	})
 
-	http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/get-forecast", func(w http.ResponseWriter, r *http.Request) {
+		getCurrentWeather(w, r, collection)
+	})
+
+	http.ListenAndServe(":8081", nil)
+}
+
+func getLocation(loc string) ([]Location, error) {
+	url := fmt.Sprintf("https://weatherapi-com.p.rapidapi.com/search.json?q=%s", loc)
+
+	req, _ := http.NewRequest("GET", url, nil)
+
+	req.Header.Add("X-RapidAPI-Key", "2fdb8b6f67mshb1178afe669a190p1a700djsnc0d0e7bce537")
+	req.Header.Add("X-RapidAPI-Host", "weatherapi-com.p.rapidapi.com")
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("request failed: %w", err)
+	}
+	defer res.Body.Close()
+
+	var locations []Location
+	err = json.NewDecoder(res.Body).Decode(&locations)
+	if err != nil {
+		return nil, fmt.Errorf("decoding response failed: %w", err)
+	}
+
+	return locations, nil
 }
 
 func saveCurrentWeather(w http.ResponseWriter, r *http.Request, collection *mongo.Collection) {
@@ -69,10 +97,56 @@ func saveCurrentWeather(w http.ResponseWriter, r *http.Request, collection *mong
 	fmt.Fprintf(w, "Item saved successfully in database. ")
 }
 
-type ForecastWeather struct {
-	Location Location `bson:"location" json:"location"`
-	Current  Current  `bson:"current" json:"current"`
-	Forecast Forecast `bson:"forecast" json:"forecast"`
+func getCurrentWeather(w http.ResponseWriter, r *http.Request, collection *mongo.Collection) {
+	// Get location parameter from query string
+	locationName := r.URL.Query().Get("location")
+
+	if locationName == "" {
+		http.Error(w, "Missing 'location' parameter", http.StatusBadRequest)
+		return
+	}
+
+	locations, err := getLocation(locationName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// If no locations are found, return an error
+	if len(locations) == 0 {
+		http.Error(w, "No locations found", http.StatusNotFound)
+		return
+	}
+
+	// Use the first location from the slice
+	location := locations[0]
+
+	// Define a filter for the search
+	filter := bson.D{
+		{"location.name", location.Name},
+		{"location.region", location.Region},
+	}
+
+	var result ForecastWeather
+	err = collection.FindOne(context.Background(), filter).Decode(&result)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// Return a 404 status code and error message if no document was found
+			http.Error(w, "No document was found!", http.StatusNotFound)
+		} else {
+			// Return a 500 status code and error message for any other error
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			fmt.Println("FindOne error:", err)
+		}
+		return
+	}
+
+	// Marshal or convert user object back to json and write to response
+	response, _ := json.Marshal(result)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
 }
 
 type Location struct {
@@ -84,6 +158,12 @@ type Location struct {
 	TzId           string  `bson:"tz_id,omitempty" json:"tz_id,omitempty"`
 	LocaltimeEpoch int64   `bson:"localtime_epoch,omitempty" json:"localtime_epoch,omitempty"`
 	Localtime      string  `bson:"localtime,omitempty" json:"localtime,omitempty"`
+}
+
+type ForecastWeather struct {
+	Location Location `bson:"location" json:"location"`
+	Current  Current  `bson:"current" json:"current"`
+	Forecast Forecast `bson:"forecast" json:"forecast"`
 }
 
 type Condition struct {

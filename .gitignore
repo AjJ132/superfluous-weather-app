@@ -25,3 +25,8 @@ cache-database/mongodb/data/diagnostic.data/metrics.2023-07-18T15-22-09Z-00000
 cache-database/mongodb/data/journal/WiredTigerLog.0000000006
 cache-database/mongodb/data/journal/WiredTigerPreplog.0000000001
 cache-database/mongodb/data/journal/WiredTigerPreplog.0000000002
+cache-database/mongodb/data/diagnostic.data/metrics.2023-07-18T15-24-57Z-00000
+cache-database/mongodb/data/diagnostic.data/metrics.2023-07-18T15-28-37Z-00000
+cache-database/mongodb/data/diagnostic.data/metrics.2023-07-18T16-28-24Z-00000
+cache-database/mongodb/data/diagnostic.data/metrics.2023-07-18T16-29-43Z-00000
+cache-database/mongodb/data/journal/WiredTigerLog.0000000010

@@ -14,6 +14,8 @@ services:
     image: mongo:latest
     volumes:
       - ./mongodb/data:/data/db
+    ports: # Add this section
+      - "27017:27017"
     networks:
       - app-network
 networks:

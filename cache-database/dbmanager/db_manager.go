@@ -31,7 +31,7 @@ func main() {
 	}
 	defer client.Disconnect(ctx)
 
-	collection := client.Database("test").Collection("documents")
+	collection := client.Database("Weather").Collection("documents")
 
 	http.HandleFunc("/save", func(w http.ResponseWriter, r *http.Request) {
 		var item Item
@@ -49,7 +49,7 @@ func main() {
 			return
 		}
 
-		fmt.Fprintf(w, "Item saved successfully in database.12345 ")
+		fmt.Fprintf(w, "Item saved successfully in database. ")
 	})
 
 	http.ListenAndServe(":8080", nil)

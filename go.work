@@ -1,6 +1,7 @@
 go 1.20
 
 use (
+	./cache-database/dbmanager
 	./user-manager
 	./weather-manager
 )

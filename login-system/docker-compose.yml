@@ -1,0 +1,28 @@
+version: '3'
+services:
+  user-manager:
+    build: ./user-manager
+    ports:
+      - "8083:8083"
+    networks:
+      - app-network
+    depends_on: 
+      - db
+  db:
+    build: ./user-database
+    environment:
+      POSTGRES_USER: dbsa
+      POSTGRES_PASSWORD: Admin123
+      POSTGRES_DB: UserDatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports: # Add this section
+      - "5432:5432"
+    networks:
+      - app-network
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

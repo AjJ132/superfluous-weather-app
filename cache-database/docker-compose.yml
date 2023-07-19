@@ -1,0 +1,23 @@
+version: '3'
+services:
+  dbmanager:
+    build: ./dbmanager
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017
+  mongodb:
+    image: mongo:latest
+    # volumes:
+    #   - ./mongodb/data:/data/db
+    ports: # Add this section
+      - "27017:27017"
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,5 @@
+network
+ - dbmanager 8081:8081
+ - weather_manager 8082:8082
+ - cache db mongodb://mongodb:27017 (8080)
+ - login-manager 8083:8083

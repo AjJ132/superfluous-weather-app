@@ -35,12 +35,12 @@ func TestSignup(t *testing.T) {
 	handler := Handler{DB: mockDB, Hasher: hasher}
 
 	// Define the expectations for the database interaction
-	mock.ExpectExec("INSERT INTO users").WithArgs(sql.Named("p1", "testuser"), sql.Named("p2", "hashedPassword")).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO users").WithArgs("testuser", "hashedPassword").WillReturnResult(sqlmock.NewResult(1, 1))
 
 	// Create a Signup request
 	creds := &Credentials{
-		Password: "password",
-		Username: "testuser",
+		sPassword: "password",
+		sUsername: "testuser",
 	}
 	credsJson, _ := json.Marshal(creds)
 	req, err := http.NewRequest("POST", "/signup", bytes.NewBuffer(credsJson))
@@ -65,7 +65,7 @@ func TestSignup(t *testing.T) {
 	}
 }
 
-// test login// test successful login
+// test successful login
 func TestSigninSuccess(t *testing.T) {
 	// Create a mock database
 	mockDB, mock, err := sqlmock.New()
@@ -82,12 +82,12 @@ func TestSigninSuccess(t *testing.T) {
 
 	// Define the expectations for the database interaction
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
-	mock.ExpectQuery("SELECT sPassword FROM users WHERE sUsername=@username").WithArgs(sql.Named("username", "testuser")).WillReturnRows(sqlmock.NewRows([]string{"sPassword"}).AddRow(string(hashedPassword)))
+	mock.ExpectQuery("SELECT sPassword FROM users WHERE sUsername=$1").WithArgs("testuser").WillReturnRows(sqlmock.NewRows([]string{"sPassword"}).AddRow(string(hashedPassword)))
 
 	// Create a Signin request
 	creds := &Credentials{
-		Password: "password",
-		Username: "testuser",
+		sPassword: "password",
+		sUsername: "testuser",
 	}
 	credsJson, _ := json.Marshal(creds)
 	req, err := http.NewRequest("POST", "/signin", bytes.NewBuffer(credsJson))
@@ -135,12 +135,12 @@ func TestSigninIncorrectPassword(t *testing.T) {
 	handler := Handler{DB: mockDB, Hasher: hasher}
 
 	// Define the expectations for the database interaction
-	mock.ExpectQuery("SELECT sPassword FROM users WHERE sUsername=@username").WithArgs(sql.Named("username", "testuser")).WillReturnRows(sqlmock.NewRows([]string{"sPassword"}).AddRow("hashedPassword"))
+	mock.ExpectQuery("SELECT sPassword FROM users WHERE sUsername=$1").WithArgs("testuser").WillReturnRows(sqlmock.NewRows([]string{"sPassword"}).AddRow("hashedPassword"))
 
 	// Create a Signin request
 	creds := &Credentials{
-		Password: "wrongpassword",
-		Username: "testuser",
+		sPassword: "wrongpassword",
+		sUsername: "testuser",
 	}
 	credsJson, _ := json.Marshal(creds)
 	req, err := http.NewRequest("POST", "/signin", bytes.NewBuffer(credsJson))
@@ -181,12 +181,12 @@ func TestSigninUserNotFound(t *testing.T) {
 	handler := Handler{DB: mockDB, Hasher: hasher}
 
 	// Define the expectations for the database interaction
-	mock.ExpectQuery("SELECT sPassword FROM users WHERE sUsername=@username").WithArgs(sql.Named("username", "testuser")).WillReturnError(sql.ErrNoRows)
+	mock.ExpectQuery("SELECT sPassword FROM users WHERE sUsername=$1").WithArgs("testuser").WillReturnError(sql.ErrNoRows)
 
 	// Create a Signin request
 	creds := &Credentials{
-		Password: "password",
-		Username: "testuser",
+		sPassword: "password",
+		sUsername: "testuser",
 	}
 	credsJson, _ := json.Marshal(creds)
 	req, err := http.NewRequest("POST", "/signin", bytes.NewBuffer(credsJson))
@@ -207,6 +207,6 @@ func TestSigninUserNotFound(t *testing.T) {
 
 	// Make sure that all expectations were met
 	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
+		t.Errorf("there were unfulfilled expectations: %. All the named parameters are mssql. Please modify them to Postgresql format. ")
 	}
 }

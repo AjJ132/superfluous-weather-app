@@ -21,7 +21,15 @@ func main() {
 		handler.getForecast(w, r)
 	})
 
-	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
+	http.HandleFunc("/signin", func(w http.ResponseWriter, r *http.Request) {
+		handler.signin(w, r)
+	})
+
+	http.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
+		handler.signup(w, r)
+	})
+
+	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
 
 }
 
@@ -44,7 +52,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If response is 404, do something else
+	// If response is 404, Fetch the weather
 	if resp.StatusCode == http.StatusNotFound {
 		forecastRequest := fmt.Sprintf("http://127.0.0.1:8082/forecast?location=%s", url.QueryEscape(locationName))
 		fmt.Println("Data not cached. Now calling weather api for data...")
@@ -134,6 +142,86 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h *Handler) signin(w http.ResponseWriter, r *http.Request) {
+	// Check for json objects 'username' and 'password'
+	var creds struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Convert credentials to JSON
+	jsonBytes, err := json.Marshal(creds)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Send request to login system
+	resp, err := http.Post("http://localhost:8083/signin", "application/json", bytes.NewBuffer(jsonBytes))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Check response status code
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, "failed to sign in", http.StatusUnauthorized)
+		return
+	}
+
+	//Write return message
+	w.Write([]byte("Successfully signed in"))
+
+	// Return success
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) signup(w http.ResponseWriter, r *http.Request) {
+	// Check for json objects 'username' and 'password'
+	var creds struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Convert credentials to JSON
+	jsonBytes, err := json.Marshal(creds)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Send request to login system
+	resp, err := http.Post("http://localhost:8083/signup", "application/json", bytes.NewBuffer(jsonBytes))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Check response status code
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, "failed to sign in", http.StatusUnauthorized)
+		return
+	}
+
+	//Write return message
+	w.Write([]byte("Successfully signed up"))
+
+	// Return success
+	w.WriteHeader(http.StatusOK)
 }
 
 type Handler struct {

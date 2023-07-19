@@ -31,7 +31,7 @@ func main() {
 		handler.Signin(w, r)
 	})
 
-	log.Fatal(http.ListenAndServe(":8083", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8083", nil))
 }
 
 func initDB() {

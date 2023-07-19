@@ -84,7 +84,13 @@ func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Username: " + creds.SUsername)
 	fmt.Println("Password: " + creds.SPassword)
-	hashedPassword, err := h.Hasher.GenerateFromPassword([]byte(creds.SPassword), 8)
+	hashedPassword, err := h.Hasher.GenerateFromPassword([]byte(creds.SPassword), 10)
+
+	//Check for errors from hashed password
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	if _, err = h.DB.Exec(`INSERT INTO Users (sUsername, sPassword) VALUES ($1, $2)`, creds.SUsername, string(hashedPassword)); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

@@ -68,9 +68,9 @@ type Handler struct {
 }
 
 type Credentials struct {
-	xnEntryID int
-	sPassword string `json:"password"`
-	sUsername string `json:"username"`
+	XnEntryID int
+	SPassword string `json:"password"`
+	SUsername string `json:"username"`
 }
 
 func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
@@ -82,11 +82,11 @@ func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("Username: " + creds.sUsername)
-	fmt.Println("Password: " + creds.sPassword)
-	hashedPassword, err := h.Hasher.GenerateFromPassword([]byte(creds.sPassword), 8)
+	fmt.Println("Username: " + creds.SUsername)
+	fmt.Println("Password: " + creds.SPassword)
+	hashedPassword, err := h.Hasher.GenerateFromPassword([]byte(creds.SPassword), 8)
 
-	if _, err = h.DB.Exec(`INSERT INTO Users (sUsername, sPassword) VALUES ($1, $2)`, creds.sUsername, string(hashedPassword)); err != nil {
+	if _, err = h.DB.Exec(`INSERT INTO Users (sUsername, sPassword) VALUES ($1, $2)`, creds.SUsername, string(hashedPassword)); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -103,9 +103,9 @@ func (h *Handler) Signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := h.DB.QueryRow(`SELECT sPassword FROM Users WHERE sUsername=$1`, creds.sUsername)
+	result := h.DB.QueryRow(`SELECT sPassword FROM Users WHERE sUsername=$1`, creds.SUsername)
 	storedCreds := &Credentials{}
-	err = result.Scan(&storedCreds.sPassword)
+	err = result.Scan(&storedCreds.SPassword)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -115,7 +115,7 @@ func (h *Handler) Signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(storedCreds.sPassword), []byte(creds.sPassword))
+	err = bcrypt.CompareHashAndPassword([]byte(storedCreds.SPassword), []byte(creds.SPassword))
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return

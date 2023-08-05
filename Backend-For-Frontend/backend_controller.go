@@ -5,8 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
+	"strconv"
+	"time"
 )
 
 func main() {
@@ -27,6 +30,10 @@ func main() {
 
 	http.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
 		handler.signup(w, r)
+	})
+
+	http.HandleFunc("/hello-world", func(w http.ResponseWriter, r *http.Request) {
+		handler.helloWorld(w, r)
 	})
 
 	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
@@ -219,6 +226,25 @@ func (h *Handler) signup(w http.ResponseWriter, r *http.Request) {
 
 	//Write return message
 	w.Write([]byte("Successfully signed up"))
+
+	// Return success
+	w.WriteHeader(http.StatusOK)
+}
+
+// Testing request return Hellow world as string
+func (h *Handler) helloWorld(w http.ResponseWriter, r *http.Request) {
+	// Set the appropriate headers for CORS
+	w.Header().Set("Access-Control-Allow-Origin", "*") // replace '*' with a specific origin if needed
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+	rand.Seed(time.Now().UnixNano())
+	message := "Hello World: " + strconv.Itoa(rand.Intn(100))
+
+	response := map[string]string{"message": message}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 
 	// Return success
 	w.WriteHeader(http.StatusOK)

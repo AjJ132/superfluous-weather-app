@@ -5,10 +5,13 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="css/main-page.css" rel="stylesheet" />
+    <link href="./style.css" rel="stylesheet" />
     <title>Vite App</title>
   </head>
   <body>
     <script type="module" src="/main.js"></script>
+
+
     <div class="main-page-container">
       <h1 style="margin-block-start: 0">Superfluous Weather</h1>
       <div class="weather-grid">
@@ -61,7 +64,12 @@
             </div>
           </div>
         </div>
-        <div class="extra-info"></div>
+        <div class="extra-info">
+          <button id="test-button">
+            <p>Test API</p>
+          </button>
+          <div id="result">The result will be displayed here.</div>
+        </div>
       </div>
     </div>
   </body>

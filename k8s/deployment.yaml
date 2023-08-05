@@ -6,24 +6,31 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: myasuper-weatherpp
+      app: super-weather
   template:
     metadata:
       labels:
         app: super-weather
     spec:
       containers:
-      - name: super-weather
-        image: <Image>
-        resources:
-          limits:
-            memory: "1024"
-            cpu: "500m"
-        ports:
-        - containerPort: 8080
+        - name: super-weather
+          image: ajj132/super-weather-app-frontend
+          resources:
+            limits:
+              memory: "2048"
+              cpu: "500m"
+          ports:
+            - containerPort: 80
+        - name: golang-container
+          image: ajj132/super-weather-app-bff
+          resources:
+            limits:
+              memory: "2048"
+              cpu: "500m"
+          ports:
+            - containerPort: 8080
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -33,5 +40,7 @@ spec:
   selector:
     app: super-weather
   ports:
-  - port: 80
-    targetPort: 8080
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer

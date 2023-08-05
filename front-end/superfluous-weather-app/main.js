@@ -6,7 +6,7 @@ let testButtton = document.getElementById('test-button');
 // Add event listener to the button
 forecastButton.addEventListener('click', function() {
   // URL for the GET request
-  let url = 'http://localhost:8080/weather-forecast?location=hartwell , GA';
+  let url = 'http://localhost:808/weather-forecast?location=hartwell , GA';
 
   // Fetch data from the URL
   fetch(url)

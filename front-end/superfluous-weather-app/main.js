@@ -24,7 +24,7 @@ forecastButton.addEventListener('click', function() {
 
 testButtton.addEventListener('click', function() {
   // URL for the GET request
-  let url = 'http://localhost:8080/hello-world';
+  let url = 'http://backend-service:8080/hello-world';
   console.log('test button clicked');
 
   // Fetch data from the URL

@@ -20,19 +20,16 @@ func main() {
 		//databse will go here
 	}
 
-	http.HandleFunc("/weather-forecast", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/weather-forecast", func(w http.ResponseWriter, r *http.Request) {
 		handler.getForecast(w, r)
 	})
-
-	http.HandleFunc("/signin", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/signin", func(w http.ResponseWriter, r *http.Request) {
 		handler.signin(w, r)
 	})
-
-	http.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/signup", func(w http.ResponseWriter, r *http.Request) {
 		handler.signup(w, r)
 	})
-
-	http.HandleFunc("/hello-world", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/hello-world", func(w http.ResponseWriter, r *http.Request) {
 		handler.helloWorld(w, r)
 	})
 

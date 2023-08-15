@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: super-weather
-        image: ajj132/super-weather-app-frontend
+        image: ajj132/super-weather-app-frontend:latest
         resources:
           limits:
             memory: "2048Mi"

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: golang-container
-        image: ajj132/super-weather-app-bff
+        image: ajj132/super-weather-app-bff:latest
         resources:
           limits:
             memory: "2048Mi"

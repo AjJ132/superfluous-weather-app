@@ -230,6 +230,7 @@ func (h *Handler) signup(w http.ResponseWriter, r *http.Request) {
 
 // Testing request return Hellow world as string
 func (h *Handler) helloWorld(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Hello World Received")
 	// Set the appropriate headers for CORS
 	w.Header().Set("Access-Control-Allow-Origin", "*") // replace '*' with a specific origin if needed
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
@@ -238,13 +239,19 @@ func (h *Handler) helloWorld(w http.ResponseWriter, r *http.Request) {
 	rand.Seed(time.Now().UnixNano())
 	message := "Hello World: " + strconv.Itoa(rand.Intn(100))
 
+	fmt.Println("Wrote Message")
+
 	response := map[string]string{"message": message}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 
-	// Return success
+	// Set the status code here, before writing the response
 	w.WriteHeader(http.StatusOK)
+
+	fmt.Println("Status OK")
+
+	// Then encode the JSON response
+	json.NewEncoder(w).Encode(response)
 }
 
 type Handler struct {

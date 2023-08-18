@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: super-weather-backend
+  name: super-weather-backend-deployment
 spec:
   replicas: 1
   selector:
@@ -13,11 +13,11 @@ spec:
         app: super-weather-backend
     spec:
       containers:
-        - name: golang-container
+        - name: backend-golang-container
           image: ajj132/super-weather-app-bff:latest
           resources:
             limits:
               memory: "2048Mi"
               cpu: "500m"
           ports:
-            - containerPort: 8080
+            - containerPort: 8082

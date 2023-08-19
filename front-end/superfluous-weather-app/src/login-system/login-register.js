@@ -1,45 +1,46 @@
-function signup(username, password) {
-  fetch("/api/signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username: username, password: password }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.message === "success") {
-        console.log("Signup successful");
-      } else {
-        console.log("Signup failed");
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
+let signinButton = document.getElementById("signin-button");
+let registerButton = document.getElementById("signup-button");
 
-function signin(username, password) {
-  fetch("/api/signin", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username: username, password: password }),
-  })
-    .then((response) => {
-      if (response.status === 200) {
-        return response.json();
-      } else {
-        throw new Error("Authentication failed");
-      }
-    })
+signinButton.addEventListener("click", function () {
+  // URL for the GET request
+  let url = "/api/signin";
+  console.log("signin button clicked");
+
+  // Fetch data from the URL
+  fetch(url)
+    .then((response) => response.json()) // Transform the data into json
     .then((data) => {
-      if (data.message === "success") {
-        console.log("Signin successful");
+      //Check if the request was 401 or 200
+
+      if (data.status == 401) {
+      } else if (data.status == 200) {
       }
     })
     .catch((error) => {
-      console.error("Error:", error);
+      console.error("There was an error fetching the API:", error);
+      document.getElementById("result").innerHTML =
+        "An error occurred while fetching the data.";
     });
-}
+});
+
+registerButton.addEventListener("click", function () {
+  // URL for the GET request
+  let url = "/api/signup";
+  console.log("signup button clicked");
+
+  // Fetch data from the URL
+  fetch(url)
+    .then((response) => response.json()) // Transform the data into json
+    .then((data) => {
+      //Check if the request was 401 or 200
+
+      if (data.status != 200) {
+      } else {
+      }
+    })
+    .catch((error) => {
+      console.error("There was an error fetching the API:", error);
+      document.getElementById("result").innerHTML =
+        "An error occurred while fetching the data.";
+    });
+});

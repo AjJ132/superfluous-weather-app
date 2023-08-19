@@ -168,7 +168,7 @@ func (h *Handler) signin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Send request to login system
-	resp, err := http.Post("http://localhost:8083/signin", "application/json", bytes.NewBuffer(jsonBytes))
+	resp, err := http.Post("http://login-service:8085/signin", "application/json", bytes.NewBuffer(jsonBytes))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -208,7 +208,7 @@ func (h *Handler) signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Send request to login system
-	resp, err := http.Post("http://localhost:8083/signup", "application/json", bytes.NewBuffer(jsonBytes))
+	resp, err := http.Post("http://login-service:8085/signup", "application/json", bytes.NewBuffer(jsonBytes))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

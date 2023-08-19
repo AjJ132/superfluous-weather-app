@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="login-register.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../style.css" />
+    <script src="login-register.js"></script>
+    <title>Login</title>
+    <script type="module" src="login-register.js"></script>
+  </head>
+  <body>
+    <!--Login Page-->
+    <div class="login-page-container">
+      <h1>Login</h1>
+      <div class="login-field-container">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit" class="submit-button">Login</button>
+        <br />
+
+        <p style="margin: auto">Dont have an account?</p>
+        <a href="./register.html" style="margin: auto">
+          <button class="register-button">Register</button>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

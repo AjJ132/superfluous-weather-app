@@ -40,7 +40,7 @@ func initDB() {
 	fmt.Println("Attempting to connect to database...")
 	var err error
 
-	connString := "postgres://dbsa:Admin123@login-database-service:5432/UserDatabase?sslmode=disable"
+	connString := "postgres://admin:password@login-database-service:5432/login_db?sslmode=disable"
 	db, err = sql.Open("postgres", connString)
 	if err != nil {
 		panic(err)

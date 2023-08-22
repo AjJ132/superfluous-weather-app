@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -169,23 +170,34 @@ func (h *Handler) signin(w http.ResponseWriter, r *http.Request) {
 
 	// Send request to login system
 	resp, err := http.Post("http://login-service:8085/signin", "application/json", bytes.NewBuffer(jsonBytes))
+	// Read the response body from the login service, which should contain the bearer token
+	tokenBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer resp.Body.Close()
 
-	// Check response status code
-	if resp.StatusCode != http.StatusOK {
-		http.Error(w, "failed to sign in", http.StatusUnauthorized)
+	// You can include the token in the response header
+	w.Header().Set("Authorization", "Bearer "+string(tokenBytes))
+
+	// Or, if you want to send it back in the JSON response, you can create a struct and marshal it
+	var response struct {
+		Message string `json:"message"`
+		Token   string `json:"token"`
+	}
+	response.Message = "Successfully signed in"
+	response.Token = string(tokenBytes)
+
+	responseJSON, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	//Write return message
-	w.Write([]byte("Successfully signed in"))
-
-	// Return success
+	// Write the JSON response containing the message and token
+	w.Write(responseJSON)
 	w.WriteHeader(http.StatusOK)
+
 }
 
 func (h *Handler) signup(w http.ResponseWriter, r *http.Request) {

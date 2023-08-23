@@ -6,7 +6,8 @@ if (
   !localStorage.getItem("token") ||
   isTokenExpired(localStorage.getItem("token"))
 ) {
-  window.location.href = "src/login-system/login.html";
+  window.location.href = "/src/login.html";
+
 }
 
 function isTokenExpired(token) {

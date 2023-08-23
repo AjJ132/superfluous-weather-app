@@ -4,11 +4,10 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="login-register.css" rel="stylesheet" />
+    <link href="login-system/login-register.css" rel="stylesheet" />
     <link rel="stylesheet" href="../style.css" />
-    <script src="login-register.js"></script>
+    <script src="login-system/login-register.js" type="module"></script>
     <title>Register</title>
-    <script type="module" src="login-register.js"></script>
   </head>
   <body>
     <!--Login Page-->
@@ -16,10 +15,13 @@
       <h1>Register</h1>
       <div class="login-field-container">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required />
+        <input type="text" id="register-username" name="username" required />
 
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
+        <input type="password" id="register-password" name="password" required />
+
+        <br />
+        <p id="register-result"></p>
 
         <button class="submit-button" id="register-button">Register</button>
         <br />

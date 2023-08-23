@@ -1,7 +1,11 @@
 export default {
   build: {
     rollupOptions: {
-      input: "src/index.html",
+      input: {
+        main: 'index.html',
+        login: 'src/login.html',
+        register: 'src/register.html'
+      },
     },
   },
 };

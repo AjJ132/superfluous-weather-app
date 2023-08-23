@@ -233,11 +233,30 @@ func (h *Handler) signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Write return message
-	w.Write([]byte("Successfully signed up"))
+	// Decode token from login system response
+	var tokenResponse struct {
+		Token string `json:"token"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	// Return success
+	// Create JSON response with token
+	response := struct {
+		Status int    `json:"status"`
+		Token  string `json:"token"`
+	}{
+		Status: http.StatusOK,
+		Token:  tokenResponse.Token,
+	}
+
+	// Write JSON response to client
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 // Testing request return Hellow world as string

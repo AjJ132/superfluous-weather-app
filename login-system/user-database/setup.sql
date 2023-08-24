@@ -3,3 +3,6 @@ CREATE TABLE Users (
     sPassword VARCHAR(255) NOT NULL,
     sUsername VARCHAR(255) UNIQUE NOT NULL
 );
+
+-- Insert default user
+INSERT INTO Users (sPassword, sUsername) VALUES ('password', 'user');

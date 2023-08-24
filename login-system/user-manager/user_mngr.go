@@ -102,14 +102,14 @@ func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
 
 	//generate JWT token
 	token, err := generateToken(creds.SUsername)
-    if err != nil {
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	//return token
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(map[string]string{"token": token})
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }
 
 func (h *Handler) Signin(w http.ResponseWriter, r *http.Request) {
@@ -127,6 +127,7 @@ func (h *Handler) Signin(w http.ResponseWriter, r *http.Request) {
 	err = result.Scan(&storedCreds.SPassword)
 	if err != nil {
 		if err == sql.ErrNoRows {
+			fmt.Println("User not found")
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -137,29 +138,30 @@ func (h *Handler) Signin(w http.ResponseWriter, r *http.Request) {
 	//compare passwords using bcrypt
 	err = bcrypt.CompareHashAndPassword([]byte(storedCreds.SPassword), []byte(creds.SPassword))
 	if err != nil {
+		fmt.Println("Passwords do not match")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
 	//generate JWT token
 	token, err := generateToken(creds.SUsername)
-    if err != nil {
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	//return token
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(map[string]string{"token": token})
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }
 
-//Generate JWT Token
+// Generate JWT Token
 func generateToken(username string) (string, error) {
-    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-        "username": username,
-        "exp":      time.Now().Add(time.Hour * 24).Unix(),
-    })
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": username,
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+	})
 
-	//return token 
-    return token.SignedString([]byte("super-weather-secret-key"))
+	//return token
+	return token.SignedString([]byte("super-weather-secret-key"))
 }

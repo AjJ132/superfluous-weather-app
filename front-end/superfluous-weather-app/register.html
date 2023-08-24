@@ -4,12 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="login-system/login-register.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../style.css" />
-    <script src="login-system/login-register.js" type="module"></script>
+    <link href="src/css/login-register.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+   
     <title>Register</title>
   </head>
   <body>
+    <script src="login-register.js" type="module"></script>
     <!--Login Page-->
     <div class="login-page-container">
       <h1>Register</h1>
@@ -23,7 +24,7 @@
         <br />
         <p id="register-result"></p>
 
-        <button class="submit-button" id="register-button">Register</button>
+        <button class="submit-button" onclick="onRegisterButtonClick()" id="register-button">Register</button>
         <br />
 
         <p style="margin: auto">Already have an account?</p>

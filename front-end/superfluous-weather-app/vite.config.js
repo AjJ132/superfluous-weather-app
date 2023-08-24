@@ -3,8 +3,8 @@ export default {
     rollupOptions: {
       input: {
         main: 'index.html',
-        login: 'src/login.html',
-        register: 'src/register.html'
+        login: 'login.html',
+        register: 'register.html'
       },
     },
   },

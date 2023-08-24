@@ -5,4 +5,4 @@ CREATE TABLE Users (
 );
 
 -- Insert default user
-INSERT INTO Users (sPassword, sUsername) VALUES ('password', 'user');
+--INSERT INTO Users (sPassword, sUsername) VALUES ('password', 'user');

@@ -195,7 +195,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the forecast URL
-	forecastURL := fmt.Sprintf("http://127.0.0.1:8081/get-forecast?location=%s", url.QueryEscape(locationName))
+	forecastURL := fmt.Sprintf("http://super-weather-cache-service:8091/get-forecast?location=%s", url.QueryEscape(locationName))
 
 	// Make the GET request
 	resp, err := http.Get(forecastURL)
@@ -206,7 +206,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 
 	// If response is 404, Fetch the weather
 	if resp.StatusCode == http.StatusNotFound {
-		forecastRequest := fmt.Sprintf("http://127.0.0.1:8082/forecast?location=%s", url.QueryEscape(locationName))
+		forecastRequest := fmt.Sprintf("http://weather-mngr-service:8094/forecast?location=%s", url.QueryEscape(locationName))
 		fmt.Println("Data not cached. Now calling weather api for data...")
 
 		// Make the GET request
@@ -245,7 +245,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Send the forecast data to the save-forecast endpoint
-		saveReq, err := http.NewRequest("POST", "http://localhost:8081/save-forecast", bytes.NewBuffer(saveData))
+		saveReq, err := http.NewRequest("POST", "http://super-weather-cache-service:8091/save-forecast", bytes.NewBuffer(saveData))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

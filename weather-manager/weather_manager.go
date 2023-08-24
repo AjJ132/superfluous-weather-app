@@ -28,7 +28,7 @@ func main() {
 		handler.getFutureWeather(w, r)
 	})
 
-	log.Fatal(http.ListenAndServe("127.0.0.1:8082", nil))
+	log.Fatal(http.ListenAndServe(":8093", nil))
 }
 
 type Handler struct {

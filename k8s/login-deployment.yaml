@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: super-weather-login-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: super-weather-login
+  template:
+    metadata:
+      labels:
+        app: super-weather-login
+    spec:
+      containers:
+        - name: login-golang-container
+          image: ajj132/super-weather-app-login:latest
+          resources:
+            limits:
+              memory: "2048Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8086

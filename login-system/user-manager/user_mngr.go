@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -31,14 +33,14 @@ func main() {
 		handler.Signin(w, r)
 	})
 
-	log.Fatal(http.ListenAndServe(":8083", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8086", nil))
 }
 
 func initDB() {
-	fmt.Println("Connecting to database...")
+	fmt.Println("Attempting to connect to database...")
 	var err error
 
-	connString := "postgres://dbsa:Admin123@db:5432/UserDatabase?sslmode=disable"
+	connString := "postgres://admin:password@login-database-service:5432/login_db?sslmode=disable"
 	db, err = sql.Open("postgres", connString)
 	if err != nil {
 		panic(err)
@@ -49,7 +51,7 @@ func initDB() {
 		panic(err)
 	}
 
-	fmt.Println("Connected!")
+	fmt.Println("Database connection successful!")
 }
 
 type Hasher interface {
@@ -75,6 +77,7 @@ type Credentials struct {
 
 func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Signup request received")
+	//decode request body into struct
 	creds := &Credentials{}
 	err := json.NewDecoder(r.Body).Decode(creds)
 	if err != nil {
@@ -82,8 +85,7 @@ func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("Username: " + creds.SUsername)
-	fmt.Println("Password: " + creds.SPassword)
+	//hash password
 	hashedPassword, err := h.Hasher.GenerateFromPassword([]byte(creds.SPassword), 10)
 
 	//Check for errors from hashed password
@@ -92,16 +94,26 @@ func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//insert user into database
 	if _, err = h.DB.Exec(`INSERT INTO Users (sUsername, sPassword) VALUES ($1, $2)`, creds.SUsername, string(hashedPassword)); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
+	//generate JWT token
+	token, err := generateToken(creds.SUsername)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	//return token
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "success"})
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }
 
 func (h *Handler) Signin(w http.ResponseWriter, r *http.Request) {
+	//decode request body into struct
 	creds := &Credentials{}
 	err := json.NewDecoder(r.Body).Decode(creds)
 	if err != nil {
@@ -109,11 +121,13 @@ func (h *Handler) Signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//query database for user
 	result := h.DB.QueryRow(`SELECT sPassword FROM Users WHERE sUsername=$1`, creds.SUsername)
 	storedCreds := &Credentials{}
 	err = result.Scan(&storedCreds.SPassword)
 	if err != nil {
 		if err == sql.ErrNoRows {
+			fmt.Println("User not found")
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -121,12 +135,33 @@ func (h *Handler) Signin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//compare passwords using bcrypt
 	err = bcrypt.CompareHashAndPassword([]byte(storedCreds.SPassword), []byte(creds.SPassword))
 	if err != nil {
+		fmt.Println("Passwords do not match")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
+	//generate JWT token
+	token, err := generateToken(creds.SUsername)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	//return token
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "success"})
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
+}
+
+// Generate JWT Token
+func generateToken(username string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": username,
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	//return token
+	return token.SignedString([]byte("super-weather-secret-key"))
 }

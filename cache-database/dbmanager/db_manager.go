@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,10 +17,7 @@ import (
 func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	mongoUri := os.Getenv("MONGODB_URI")
-	if mongoUri == "" {
-		log.Fatal("You must set your 'MONGODB_URI' environmental variable.")
-	}
+	mongoUri := "mongodb://cache-database-service:8092" 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoUri))
 
 	if err != nil {
@@ -30,6 +26,7 @@ func main() {
 	defer client.Disconnect(ctx)
 
 	collection := client.Database("Weather").Collection("documents")
+	createTTLIndex(collection)
 
 	http.HandleFunc("/save-forecast", func(w http.ResponseWriter, r *http.Request) {
 		saveCurrentWeather(w, r, collection)
@@ -39,7 +36,7 @@ func main() {
 		getCurrentWeather(w, r, collection)
 	})
 
-	http.ListenAndServe(":8081", nil)
+	http.ListenAndServe(":8090", nil)
 }
 
 func getLocation(loc string) ([]Location, error) {
@@ -85,6 +82,7 @@ func saveCurrentWeather(w http.ResponseWriter, r *http.Request, collection *mong
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
+	item.CreatedAt = time.Now()
 	result, err := collection.InsertOne(ctx, item)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -152,6 +150,19 @@ func getCurrentWeather(w http.ResponseWriter, r *http.Request, collection *mongo
 	w.Write(response)
 }
 
+func createTTLIndex(collection *mongo.Collection) {
+	indexModel := mongo.IndexModel{
+		Keys:    bson.M{"createdAt": 1}, // Index key
+		Options: options.Index().SetExpireAfterSeconds(300), // Expire after 5 minutes
+	}
+
+	_, err := collection.Indexes().CreateOne(context.Background(), indexModel)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+
 type Location struct {
 	Name           string  `bson:"name,omitempty" json:"name,omitempty"`
 	Region         string  `bson:"region,omitempty" json:"region,omitempty"`
@@ -167,6 +178,7 @@ type ForecastWeather struct {
 	Location Location `bson:"location" json:"location"`
 	Current  Current  `bson:"current" json:"current"`
 	Forecast Forecast `bson:"forecast" json:"forecast"`
+	CreatedAt time.Time `bson:"createdAt" json:"createdAt"`
 }
 
 type Condition struct {

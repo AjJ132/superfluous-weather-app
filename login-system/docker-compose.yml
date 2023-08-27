@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   user-manager:
     build: ./user-manager
@@ -6,14 +6,14 @@ services:
       - "8083:8083"
     networks:
       - app-network
-    depends_on: 
+    depends_on:
       - db
   db:
     build: ./user-database
     environment:
-      POSTGRES_USER: dbsa
-      POSTGRES_PASSWORD: Admin123
-      POSTGRES_DB: UserDatabase
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: login_db
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports: # Add this section

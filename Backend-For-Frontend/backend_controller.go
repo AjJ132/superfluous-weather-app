@@ -5,8 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
+	"strconv"
+	"time"
 )
 
 func main() {
@@ -17,12 +20,169 @@ func main() {
 		//databse will go here
 	}
 
-	http.HandleFunc("/weather-forecast", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/weather-forecast", func(w http.ResponseWriter, r *http.Request) {
 		handler.getForecast(w, r)
 	})
+	http.HandleFunc("/api/signin", func(w http.ResponseWriter, r *http.Request) {
+		handler.signin(w, r)
+	})
+	http.HandleFunc("/api/signup", func(w http.ResponseWriter, r *http.Request) {
+		handler.signup(w, r)
+	})
+	http.HandleFunc("/api/hello-world", func(w http.ResponseWriter, r *http.Request) {
+		handler.helloWorld(w, r)
+	})
 
-	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8082", nil))
 
+}
+
+func (h *Handler) signin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Signin Received")
+	// Check for json objects 'username' and 'password'
+	var creds struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Convert credentials to JSON
+	jsonBytes, err := json.Marshal(creds)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Send request to login system
+	resp, err := http.Post("http://login-service:8085/signin", "application/json", bytes.NewBuffer(jsonBytes))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	//print response
+	fmt.Println(resp)
+
+	// Check response status code
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, "failed to sign in", http.StatusUnauthorized)
+		return
+	}
+
+	// Decode token from login system response
+	var tokenResponse struct {
+		Token string `json:"token"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Create JSON response with token
+	response := struct {
+		Status int    `json:"status"`
+		Token  string `json:"token"`
+	}{
+		Status: http.StatusOK,
+		Token:  tokenResponse.Token,
+	}
+
+	// Write JSON response to client
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *Handler) signup(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Signup Received")
+	// Check for json objects 'username' and 'password'
+	var creds struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Convert credentials to JSON
+	jsonBytes, err := json.Marshal(creds)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Send request to login system
+	resp, err := http.Post("http://login-service:8085/signup", "application/json", bytes.NewBuffer(jsonBytes))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Check response status code
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, "failed to sign in", http.StatusUnauthorized)
+		return
+	}
+
+	// Decode token from login system response
+	var tokenResponse struct {
+		Token string `json:"token"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&tokenResponse); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Create JSON response with token
+	response := struct {
+		Status int    `json:"status"`
+		Token  string `json:"token"`
+	}{
+		Status: http.StatusOK,
+		Token:  tokenResponse.Token,
+	}
+
+	// Write JSON response to client
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// Testing request return Hellow world as string
+func (h *Handler) helloWorld(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Hello World Received")
+	// Set the appropriate headers for CORS
+	w.Header().Set("Access-Control-Allow-Origin", "*") // replace '*' with a specific origin if needed
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+	rand.Seed(time.Now().UnixNano())
+	message := "Hello World: " + strconv.Itoa(rand.Intn(100))
+
+	fmt.Println("Wrote Message")
+
+	response := map[string]string{"message": message}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	// Set the status code here, before writing the response
+	w.WriteHeader(http.StatusOK)
+
+	fmt.Println("Status OK")
+
+	// Then encode the JSON response
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +195,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the forecast URL
-	forecastURL := fmt.Sprintf("http://127.0.0.1:8081/get-forecast?location=%s", url.QueryEscape(locationName))
+	forecastURL := fmt.Sprintf("http://super-weather-cache-service:8091/get-forecast?location=%s", url.QueryEscape(locationName))
 
 	// Make the GET request
 	resp, err := http.Get(forecastURL)
@@ -44,9 +204,9 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If response is 404, do something else
+	// If response is 404, Fetch the weather
 	if resp.StatusCode == http.StatusNotFound {
-		forecastRequest := fmt.Sprintf("http://127.0.0.1:8082/forecast?location=%s", url.QueryEscape(locationName))
+		forecastRequest := fmt.Sprintf("http://weather-mngr-service:8094/realtime-weather?location=%s", url.QueryEscape(locationName))
 		fmt.Println("Data not cached. Now calling weather api for data...")
 
 		// Make the GET request
@@ -73,6 +233,8 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		fmt.Println("Data:", forecastData)
+
 		response.Body.Close()
 
 		fmt.Println("Successfully decoded weather data")
@@ -85,7 +247,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Send the forecast data to the save-forecast endpoint
-		saveReq, err := http.NewRequest("POST", "http://localhost:8081/save-forecast", bytes.NewBuffer(saveData))
+		saveReq, err := http.NewRequest("POST", "http://super-weather-cache-service:8091/save-forecast", bytes.NewBuffer(saveData))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -112,6 +274,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		return
 
 	} else if resp.StatusCode != http.StatusOK {
 		http.Error(w, "Unexpected status code", http.StatusInternalServerError)

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: super-weather-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: super-weather-frontend
+  template:
+    metadata:
+      labels:
+        app: super-weather-frontend
+    spec:
+      containers:
+        - name: super-weather
+          image: ajj132/super-weather-app-frontend:latest
+          resources:
+            limits:
+              memory: "2048Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8080

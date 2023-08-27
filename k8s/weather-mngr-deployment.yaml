@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-mngr-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weather-mngr
+  template:
+    metadata:
+      labels:
+        app: weather-mngr
+    spec:
+      containers:
+        - name: weather-mngr-golang-container
+          image: ajj132/super-weather-app-weather-mngr:latest
+          resources:
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8093

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - working-branch
 
 env:
   BUILD_ID: ${{ github.sha }}
@@ -19,6 +20,7 @@ jobs:
     - name: Build BFF
       run: |
         cd Backend-For-Frontend
+        ls
         docker buildx build --push -t ajj132/super-weather-app-bff:${{ env.BUILD_ID }} .
 
     - name: Build Cache Database Manager
@@ -52,39 +54,39 @@ jobs:
         cd weather-manager
         docker buildx build --push -t ajj132/super-weather-app-weather-mngr:${{ env.BUILD_ID }} .
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout Code
+  #     uses: actions/checkout@v2
 
-    - name: Local Deploy
-      run: |
-        cd k8s
-        minikube start
-        kubectl delete -f .
-        kubectl apply -f .
+  #   - name: Local Deploy
+  #     run: |
+  #       cd k8s
+  #       minikube start
+  #       kubectl delete -f .
+  #       kubectl apply -f .
 
-  load-test:
-    needs: deploy
-    runs-on: ubuntu-latest
+  # load-test:
+  #   needs: deploy
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout Code
+  #     uses: actions/checkout@v2
 
-    - name: Build Load Tester
-      run: |
-        cd Load-Test
-        docker buildx build --push -t ajj132/super-weather-app-load-tester:${{ env.BUILD_ID }} .
+  #   - name: Build Load Tester
+  #     run: |
+  #       cd Load-Test
+  #       docker buildx build --push -t ajj132/super-weather-app-load-tester:${{ env.BUILD_ID }} .
 
-    - name: Load Testing
-      run: |
-        cd Load-Test
-        ./load-test.jmx
+  #   - name: Load Testing
+  #     run: |
+  #       cd Load-Test
+  #       ./load-test.jmx
 
-    - name: Analyze Results
-      run: |
-        # Perform your analysis here (example: using Performance plugin)
+  #   - name: Analyze Results
+  #     run: |
+  #       # Perform your analysis here (example: using Performance plugin)

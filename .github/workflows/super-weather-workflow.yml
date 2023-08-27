@@ -20,8 +20,7 @@ jobs:
     - name: Build BFF
       run: |
         cd Backend-For-Frontend
-        ls
-        docker buildx build --push -t ajj132/super-weather-app-bff:${{ env.BUILD_ID }} .
+        remdocker buildx build --push -t ajj132/super-weather-app-bff:${{ env.BUILD_ID }} .
 
     - name: Build Cache Database Manager
       run: |

@@ -3,7 +3,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: start;
-    height: 100vh;
+    height: fit-content;
+    min-height: 100vh;
 
     margin-right: auto;
     margin-left: auto;
@@ -85,5 +86,10 @@
   
 
   .results-container{
-    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    height: fit-content;
+    width: 100%;
   }

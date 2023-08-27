@@ -206,7 +206,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 
 	// If response is 404, Fetch the weather
 	if resp.StatusCode == http.StatusNotFound {
-		forecastRequest := fmt.Sprintf("http://weather-mngr-service:8094/forecast?location=%s", url.QueryEscape(locationName))
+		forecastRequest := fmt.Sprintf("http://weather-mngr-service:8094/realtime-weather?location=%s", url.QueryEscape(locationName))
 		fmt.Println("Data not cached. Now calling weather api for data...")
 
 		// Make the GET request
@@ -232,6 +232,8 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		fmt.Println("Data:", forecastData)
 
 		response.Body.Close()
 
@@ -272,6 +274,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		return
 
 	} else if resp.StatusCode != http.StatusOK {
 		http.Error(w, "Unexpected status code", http.StatusInternalServerError)

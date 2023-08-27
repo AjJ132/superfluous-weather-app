@@ -24,9 +24,9 @@ func main() {
 		handler.getRealtimeWeather(w, r)
 	})
 
-	http.HandleFunc("/forecast", func(w http.ResponseWriter, r *http.Request) {
-		handler.getFutureWeather(w, r)
-	})
+	// http.HandleFunc("/forecast", func(w http.ResponseWriter, r *http.Request) {
+	// 	handler.getFutureWeather(w, r)
+	// })
 
 	log.Fatal(http.ListenAndServe(":8093", nil))
 }

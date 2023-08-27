@@ -1,0 +1,89 @@
+.home-page-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    height: 100vh;
+
+    margin-right: auto;
+    margin-left: auto;
+
+    background-color: #0c1220;
+
+    padding: 2rem;
+}
+
+.search-bar-wrapper{
+    width: 100%;
+    height: fit-content;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    gap: 1rem;
+}
+
+.search-bar{
+    width: 25vw;
+    height: 100%;
+    max-width: 670px;
+
+    background-color: #212c3e;
+    border-radius: 25px;
+
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0.35rem;
+}
+
+#locationTB {
+    background-color: #212c3e; 
+    margin-left: 10px;
+     
+    border: 2px solid transparent;
+    border-radius: 25px;  /* This gives the input field rounded corners */
+    width: 90%;
+    height: 100%;
+    outline: none;  /* This removes the default outline that appears on focus */
+
+    caret-color: white;
+    color: white;
+}
+
+#locationTB::placeholder {
+    color: #888;
+}
+
+
+
+.dark-button {
+    background-color: #00aaff;
+    color: #ffffff; 
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dark-button:hover {
+    background-color: #3e8ad7; 
+  }
+  
+  .dark-button:active {
+    background-color: #2e6da4;
+  }
+  
+
+  .results-container{
+    
+  }

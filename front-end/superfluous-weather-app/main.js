@@ -2,11 +2,15 @@
 let forecastButton = document.getElementById("forecast-button");
 let testButtton = document.getElementById("test-button");
 
+var previousSearch = "";
+
+window.onSearchButtonClick = onSearchButtonClick;
+
 if (
   !localStorage.getItem("token") ||
   isTokenExpired(localStorage.getItem("token"))
 ) {
-  window.location.href = "/login.html";
+  //window.location.href = "/login.html";
 
 }
 
@@ -18,127 +22,44 @@ function isTokenExpired(token) {
   return expirationDate < new Date().getTime();
 }
 
-// Add event listener to the button
-forecastButton.addEventListener("click", function () {
-  // URL for the GET request
-  let url = "http://localhost:8080/weather-forecast?location=hartwell , GA";
+export function onSearchButtonClick(){
+  //grab text from search button
+  let search = document.getElementById("locationTB").value;
 
-  // Fetch data from the URL
-  fetch(url)
-    .then((response) => response.json()) // Transform the data into json
-    .then((data) => {
-      // Do something with the data
-      console.log(data);
-    })
-    .catch((error) => {
-      // Handle the error
-      console.error("Error:", error);
-    });
-});
+  //verify that search isnt empty
+  if(search == ""){
+    alert("Please enter a location");
+    return;
+  }
 
-testButtton.addEventListener("click", function () {
-  // URL for the GET request
-  let url = "/api/hello-world";
-  console.log("test button clicked");
+  //verify that search isnt the same as the previous search
+  if(search == previousSearch){
+   console.log("same search. Not doing anything");
+    return;
+  }
 
-  // Fetch data from the URL
-  fetch(url)
-    .then((response) => response.json()) // Transform the data into json
-    .then((data) => {
-      //Get json data
-      let text = data.message;
-      document.getElementById("result").innerHTML = text;
-    })
-    .catch((error) => {
-      console.error("There was an error fetching the API:", error);
-      document.getElementById("result").innerHTML =
-        "An error occurred while fetching the data.";
-    });
-});
+  //set previous search to current search
+  previousSearch = search;
 
-
-
-export function onRegisterButtonClick() {
-
-  // URL for the POST request
-  let url = "/api/signup";
-  console.log("signup button clicked");
-  let username = document.getElementById("register-username").value;
-  let password = document.getElementById("register-password").value;
-
-  // Create JSON payload
-  let payload = {
-    username: username,
-    password: password
-  };
-
-  // Fetch data using POST method and sending JSON in the body
-  fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload)
-  })
-  .then((response) => response.json()) // Transform the data into json
-  .then((data) => {
-    // Check if the request was 401 or 200
-    if (data.status == 401) {
-      document.getElementById("login-result").innerHTML = "Something went wrong";
-    } else if (data.status == 200) {
-      console.log("register successful");
-
-      // Save the token to local storage
-      localStorage.setItem('token', data.token);
-
-      // Redirect to home page
-      window.location.href = "/";
-    }
-  })
-  .catch((error) => {
-    console.error("There was an error fetching the API:", error);
-    document.getElementById("result").innerHTML = "An error occurred while fetching the data.";
-  });
+  //Call API
+  getForecast(search);
 };
 
-export function onSigninButtonClick() {
-  // URL for the POST request
-  let url = "/api/signin";
-  console.log("signin button clicked");
-  let username = document.getElementById("login-username").value;
-  let password = document.getElementById("login-password").value;
+async function getForecast(search) {
+  try {
+    let url = "/api/forecast?location=" + encodeURIComponent(search);
+    const response = await fetch(url);
 
-  // Create JSON payload
-  let payload = {
-    username: username,
-    password: password
-  };
-
-  // Fetch data using POST method and sending JSON in the body
-  fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload)
-  })
-  .then((response) => response.json()) // Transform the data into json
-  .then((data) => {
-    // Check if the request was 401 or 200
-    if (data.status == 401) {
-      document.getElementById("login-result").innerHTML = "Something went wrong";
-    } else if (data.status == 200) {
-      console.log("login successful");
-
-      // Save the token to local storage
-      localStorage.setItem('token', data.token);
-
-      // Redirect to home page
-      window.location.href = "/";
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
-  })
-  .catch((error) => {
+
+    const data = await response.json();
+
+    console.log("Forecast successful");
+    console.log(data);
+
+  } catch (error) {
     console.error("There was an error fetching the API:", error);
-    document.getElementById("result").innerHTML = "An error occurred while fetching the data.";
-  });
-};
+  }
+}

@@ -1,5 +1,6 @@
 # **Superfluous Weather**
 
+![Superfluous Weather Screenshot](images/frontend.png)
 
 **Table of Contents**
 

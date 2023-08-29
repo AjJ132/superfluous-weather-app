@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jmeter-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: jmeter
+        image: ajj132/super-weather-app-load-test:latest
+        command: ["jmeter"]
+        args: ["-n", "-t", "/tests/load-test.jmx", "-l", "/logs/results.jtl"]
+      restartPolicy: Never
+  backoffLimit: 4

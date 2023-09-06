@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -40,14 +41,20 @@ func initDB() {
 	fmt.Println("Attempting to connect to database...")
 	var err error
 
-	connString := "postgres://admin:password@login-database-service:5432/login_db?sslmode=disable"
+	user := os.Getenv("POSTGRES_USER")
+  	password := os.Getenv("POSTGRES_PASSWORD")
+	  fmt.Println("User:", user)
+	  fmt.Println("Password:", password)
+  	connString := fmt.Sprintf("postgres://%s:%s@login-database-service:5432/login_db?sslmode=disable", user, password)
 	db, err = sql.Open("postgres", connString)
 	if err != nil {
+		fmt.Println("Error opening database connection")
 		panic(err)
 	}
 
 	err = db.Ping()
 	if err != nil {
+		fmt.Println("Error pinging the database connection")
 		panic(err)
 	}
 

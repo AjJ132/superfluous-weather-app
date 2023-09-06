@@ -16,8 +16,11 @@ spec:
         - name: login-golang-container
           image: ajj132/super-weather-app-login:latest
           resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
             limits:
-              memory: "2048Mi"
+              memory: "512Mi"
               cpu: "500m"
           ports:
             - containerPort: 8086

@@ -16,8 +16,11 @@ spec:
         - name: weather-mngr-golang-container
           image: ajj132/super-weather-app-weather-mngr:latest
           resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
             limits:
-              memory: "1024Mi"
-              cpu: "500m"
+              memory: "512Mi"
+              cpu: "300m"
           ports:
             - containerPort: 8093

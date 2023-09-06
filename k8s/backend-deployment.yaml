@@ -16,8 +16,11 @@ spec:
         - name: backend-golang-container
           image: ajj132/super-weather-app-bff:latest
           resources:
+            requests:
+              memory: "64Mi"
+              cpu: "128m"
             limits:
-              memory: "2048Mi"
-              cpu: "500m"
+              memory: "128Mi"
+              cpu: "256m"
           ports:
             - containerPort: 8082

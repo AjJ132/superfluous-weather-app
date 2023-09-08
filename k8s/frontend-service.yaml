@@ -4,6 +4,7 @@ metadata:
   name: super-weather
 spec:
   type: LoadBalancer
+  loadBalancerIP: 20.33.14.3
   selector:
     app: super-weather-frontend
   ports:

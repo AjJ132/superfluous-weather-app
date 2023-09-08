@@ -186,6 +186,10 @@ func (h *Handler) helloWorld(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
+	
+	startTime := time.Now()
+	fromCache := false
+	
 	// Get location parameter from query string
 	locationName := r.URL.Query().Get("location")
 
@@ -197,7 +201,7 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 	// Create the forecast URL
 	forecastURL := fmt.Sprintf("http://super-weather-cache-service:8091/get-forecast?location=%s", url.QueryEscape(locationName))
 
-	// Make the GET request
+	// Make the GET request to cache
 	resp, err := http.Get(forecastURL)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -268,12 +272,26 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println("Successfully sent data to save endpoint")
 
-		// Return JSON to user
+		endTime := time.Now()
+		responseTime := endTime.Sub(startTime)
+
+		// Create the map for meta data
+		meta := map[string]interface{}{
+			"responseTime": responseTime.Milliseconds(), // or .Seconds(), depending on what you want
+			"fromCache":    fromCache, // Boolean value to indicate if data is from cache
+		}
+
+		// Directly add the 'meta' field to the existing forecastData map
+		forecastData["meta"] = meta
+
+		// Continue with sending the JSON response
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(forecastData); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+
 		return
 
 	} else if resp.StatusCode != http.StatusOK {
@@ -282,6 +300,17 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("Successfully got weather data from cache. Reutrning data to user")
+	
+	// Set fromCache to true
+	fromCache = true
+	endTime := time.Now()
+	responseTime := endTime.Sub(startTime)
+
+	// Prepare metadata and append it to forecastData
+	meta := map[string]interface{}{
+		"responseTime": responseTime.Milliseconds(), // or .Seconds(), based on what you need
+		"fromCache":    fromCache,
+	}
 
 	// Decode JSON from response body
 	var forecastData interface{}
@@ -289,14 +318,27 @@ func (h *Handler) getForecast(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	// Assume forecastData is of type interface{}
+	forecastDataMap, ok := forecastData.(map[string]interface{})
+	if !ok {
+		// Handle type assertion failure
+		http.Error(w, "Type assertion failed", http.StatusInternalServerError)
+		return
+	}
+
+	// Now you can set the 'meta' field
+	forecastDataMap["meta"] = meta
+
 	resp.Body.Close()
 
 	// Return JSON to user
+	// Send the final response
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(forecastData); err != nil {
+	if err := json.NewEncoder(w).Encode(forecastDataMap); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 }
 
 type Handler struct {

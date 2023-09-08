@@ -17,9 +17,15 @@ spec:
           image: ajj132/super-weather-app-login-database:latest
           env:
             - name: POSTGRES_USER
-              value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: POSTGRES_PASSWORD
             - name: POSTGRES_DB
               value: login_db
           ports:

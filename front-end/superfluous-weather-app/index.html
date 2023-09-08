@@ -12,9 +12,20 @@
 
     <div class="home-page-container">
       <div>
-        <button onclick="logout()" class="dark-button" style="background-color: orange !important; position: absolute; top: 20px; left: 20px;">Logout</button>
+        <button
+          onclick="logout()"
+          class="dark-button"
+          style="
+            background-color: orange !important;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+          "
+        >
+          Logout
+        </button>
       </div>
-      <h1 style="margin-block-start: 0; color: white;">Superfluous Weather</h1>
+      <h1 style="margin-block-start: 0; color: white">Superfluous Weather</h1>
       <div class="search-bar-wrapper">
         <div class="search-bar">
           <input
@@ -23,11 +34,21 @@
             placeholder="Search Locations..."
           />
         </div>
-        <button id="search-button" class="dark-button" onclick="onSearchButtonClick()">Search</button>
-       </div>
-       <div class="results-container">
-          <p style="color: white;" id="data-results"></p>
-       </div>
+        <button
+          id="search-button"
+          class="dark-button"
+          onclick="onSearchButtonClick()"
+        >
+          Search
+        </button>
+      </div>
+      <div class="results-container">
+        <p style="color: white" id="data-results"></p>
+      </div>
+      <div class="results-container">
+        <p style="color: white" id="responseTime"></p>
+        <p style="color: white" id="fromCache"></p>
+      </div>
     </div>
   </body>
 </html>

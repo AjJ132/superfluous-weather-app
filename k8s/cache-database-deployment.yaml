@@ -16,8 +16,11 @@ spec:
         - name: cache-mongodb-container
           image: ajj132/super-weather-app-cache-database:latest
           resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
             limits:
-              memory: "2048Mi"
+              memory: "1024Mi"
               cpu: "500m"
           ports:
             - containerPort: 27017

@@ -40,7 +40,13 @@ Upcoming features and project enhancements for Superfluous Weather include the i
 
 **Prerequisites**
 
-While this project is available and hosted online you can easily run this locally on your machine. Before downloading and running please ensure that you have Docker open with Kubernetes installed. Minikube and Kubectl are also required as they allow for local node management.
+Due to the high operational costs associated with Azure AKS, this project is no longer hosted online. To run it, you'll need to set it up locally on your machine.
+
+Before proceeding, please ensure that the following software is installed and configured on your system:
+
+Docker, with Kubernetes support enabled
+Minikube, for local Kubernetes cluster management
+Kubectl, for interacting with the Kubernetes cluster
 
 **Installation**
 

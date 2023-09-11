@@ -53,4 +53,4 @@ To use the system please create or login to your account. Once in there you can 
 **Future Plans**
 
 - CI/CD pipeline
-- Automated load testing using
+- Automated load testing using Apache JMeter
